@@ -1,0 +1,22 @@
+[
+  {
+    "State": "enabled",
+    "Capacity": 120,
+    "Usage": 90,
+    "Location": {
+      "X": 0,
+      "Y": 0
+    },
+    "Id": "dumpster10"
+  },
+  {
+    "State": "assigned",
+    "Capacity": 240,
+    "Usage": 50,
+    "Location": {
+      "X": 10,
+      "Y": 10
+    },
+    "Id": "dumpster11"
+  }
+]

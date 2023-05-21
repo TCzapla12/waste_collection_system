@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataservice-dumpsters  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataservice-dumpsters
+  template:
+    metadata:
+      labels:
+        app: dataservice-dumpsters
+    spec:
+      containers:
+      - name: dataservice-dumpsters-rest
+        image: tczaplic/pdi:dataservicedumpstersrest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataservice-dumpsters-api
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30080
+  selector:
+    app: dataservice-dumpsters

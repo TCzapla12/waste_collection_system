@@ -1,0 +1,27 @@
+﻿#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+#For more information, please see https://aka.ms/containercompat
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+LABEL stage=dataservicedumpstersrest_build
+WORKDIR /src
+COPY ["PDI.DataServiceDumpsters.Rest/PDI.DataServiceDumpsters.Rest.csproj", "PDI.DataServiceDumpsters.Rest/"]
+COPY ["PDI.DataServiceDumpsters.Tests/PDI.DataServiceDumpsters.Tests.csproj", "PDI.DataServiceDumpsters.Tests/"]
+COPY ["PDI.DataServiceDumpsters.Logic/PDI.DataServiceDumpsters.Logic.csproj", "PDI.DataServiceDumpsters.Logic/"]
+COPY ["PDI.DataServiceDumpsters.Model/PDI.DataServiceDumpsters.Model.csproj", "PDI.DataServiceDumpsters.Model/"]
+COPY ["PDI.DataServiceDumpsters.Rest.Tests/PDI.DataServiceDumpsters.Rest.Tests.csproj", "PDI.DataServiceDumpsters.Rest.Tests/"]
+COPY ["PDI.DataServiceDumpsters.Rest.Model/PDI.DataServiceDumpsters.Rest.Model.csproj", "PDI.DataServiceDumpsters.Rest.Model/"]
+RUN dotnet restore "PDI.DataServiceDumpsters.Rest/PDI.DataServiceDumpsters.Rest.csproj"
+COPY . .
+WORKDIR "/src/PDI.DataServiceDumpsters.Rest"
+RUN dotnet build "PDI.DataServiceDumpsters.Rest.csproj" -c Release -o /app/build
+RUN dotnet publish "PDI.DataServiceDumpsters.Rest.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+EXPOSE 80
+EXPOSE 443
+WORKDIR /app
+COPY --from=build /app/publish .
+COPY PDI.DataServiceDumpsters.Rest/dumpsters.json .
+ENTRYPOINT ["dotnet", "PDI.DataServiceDumpsters.Rest.dll"]
