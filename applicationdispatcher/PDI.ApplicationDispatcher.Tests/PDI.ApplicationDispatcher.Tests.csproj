@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
+    <PackageReference Include="coverlet.collector" Version="3.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Radzen.Blazor" Version="4.4.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Controller\PDI.ApplicationDispatcher.Controller.csproj" />
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Model\PDI.ApplicationDispatcher.Model.csproj" />
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Utilities\PDI.ApplicationDispatcher.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,219 @@
+﻿@page "/data"
+@page "/data/{id}"
+@using System.Globalization
+@inject IController controller
+@inject IModel model
+@inject NavigationManager NaviManager
+@inject DialogService DialogService
+
+<h1>Pomiary</h1>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    @if (id != null)
+    {
+        <p class="mb-0">Pomiary dla śmietnika: @id.</p>
+    }
+    else
+    {
+        <p class="mb-0">Wszystkie zebrane pomiary.</p>
+    }
+
+    <RadzenButton Click=@DeleteOldMeasurements Icon="delete" Text="USUŃ POMIARY"
+                  Style="color: white; width: 30%; font-size: 15px; background-color:rgb(181, 21, 10);" />
+</div>
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Simple" FilterText="" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@measurements" TItem="MeasurementData" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.And" EmptyText="Brak danych."
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+    <Columns>
+        <RadzenDataGridColumn TItem="MeasurementData" Property="Id" Filterable="false" Title="ID" Frozen="true" Width="30px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="MeasurementData" Property="DumpsterId" Filterable="true" Title="ŚMIETNIK" Width="50px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="MeasurementData" Property="DateTime" Filterable="true" Title="DATA" Width="50px" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                <span>@DateTime.ParseExact(data.DateTime, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)</span>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MeasurementData" Property="Usage" Filterable="true" Title="ZAPEŁNIENIE [%]" Width="50px" TextAlign="TextAlign.Center" FilterValue="@currentUsage">
+            <FilterTemplate>
+                <RadzenNumeric TValue="int?" Step="10" Change=@(args => OnChange("usage", args))
+                               Style="width: 100%; height: 35px; margin-bottom: 0.5rem;" />
+            </FilterTemplate>
+            <Template Context="data">
+                @if (data.Usage <= 50)
+                {
+                    <span style="color: green; font-weight: 800">@data.Usage</span>
+                }
+                else if (data.Usage <= 80)
+                {
+                    <span style="color: rgb(135, 131, 19); font-weight: 800">@data.Usage</span>
+                }
+                else
+                {
+                    <span style="color: rgb(181, 21, 10); font-weight: 800">@data.Usage</span>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="MeasurementData" Property="Usage" Filterable="false" Sortable="false" Title="AKCJE" Width="50px" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                <div class="d-flex justify-content-between">
+                    <RadzenButton Click=@(args => OnClick("delete", data)) Icon="clear" Text="USUŃ"
+                                  Style="color: white; width: 100%; font-size: 13px; background-color:rgb(181, 21, 10); display: flex; justify-content: center; column-gap: 5px;" />
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@if (id == null)
+{
+    <div class="charts">
+        <h1>Trasy</h1>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <p class="mb-0">Zakończone trasy.</p>
+            <RadzenButton Click=@DeleteOldRoutes Icon="delete" Text="USUŃ TRASY"
+                      Style="color: white; width: 30%; font-size: 15px; background-color:rgb(181, 21, 10);" />
+        </div>
+
+        <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Simple" FilterText="" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                    Data="@routes" TItem="PDI.ApplicationDispatcher.Model.RouteData" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.And" EmptyText="Brak danych."
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+            <Columns>
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="Id" Filterable="false" Title="ID" Frozen="true" Width="30px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="VehicleId" Filterable="false" Title="ŚMIECIARKA" Width="50px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <div class="">
+                            <RadzenButton Icon="local_shipping" Style="color:green; background: #00000000" Click="@(args => RouteVehicle(data.VehicleId))" />
+                        </div>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="DumpstersIds" Filterable="false" Title="ŚMIETNIKI" Width="50px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <div class="">
+                            <RadzenButton Icon="delete" Style="color:green; background: #00000000" Click="@(args => RouteDumpsters(data.Id))" />
+                        </div>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="DumpstersIds.Count" Filterable="true" Title="L. ŚMIETNIKÓW" Width="50px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="Distance" Filterable="true" FilterOperator="FilterOperator.GreaterThanOrEquals" Title="DYSTANS [km]" Width="50px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <span> @Math.Round(data.Distance,3)</span>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="StartDate" Filterable="true" Title="ROZPOCZĘCIE" Width="50px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <span>@DateTime.ParseExact(data.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)</span>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="FinishDate" Filterable="true" Title="ZAKOŃCZENIE" Width="50px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <span>@DateTime.ParseExact(data.FinishDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)</span>
+                    </Template>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="State" Filterable="false" Sortable="false" Title="AKCJE" Width="80px" TextAlign="TextAlign.Center">
+                    <Template Context="data">
+                        <div class="d-flex justify-content-between">
+                            <RadzenButton Click=@(args => On2Click("delete", data)) Icon="clear" Style="color: white; width: 100%; font-size: 13px; background-color:rgb(181, 21, 10)" Text="USUŃ" />
+                        </div>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+   
+}
+
+
+
+@code {
+    [Parameter] public string id { get; set; }
+    IEnumerable<MeasurementData> measurements;
+    IEnumerable<ApplicationDispatcher.Model.RouteData> routes;
+    int? currentUsage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await controller.SearchMeasurementsAsync();
+        await controller.SearchOldRoutesAsync();
+        if (id != null)
+        {
+            measurements = model.MeasurementsList.Where(m => m.DumpsterId == id).ToList();
+        }
+        else
+        {
+            measurements = model.MeasurementsList;
+        }
+        routes = model.OldRoutesList.Where(r => r.State == RouteState.finished).ToList();
+
+    }
+
+    async void OnChange(string filter, dynamic value)
+    {
+        if (filter == "usage")
+        {
+            currentUsage = value;
+        }
+    }
+
+    async void OnClick(string buttonName, MeasurementData data)
+    {
+        if (buttonName == "edit")
+        {
+            //await this.EditDumpster(data);
+        }
+        else if (buttonName == "delete")
+        {
+            //await this.DeleteDumpster(data.Id);
+        }
+    }
+
+    async void On2Click(string buttonName, ApplicationDispatcher.Model.RouteData data)
+    {
+        if (buttonName == "edit")
+        {
+            //await this.EditDumpster(data);
+        }
+        else if (buttonName == "delete")
+        {
+            //await this.DeleteDumpster(data.Id);
+        }
+    }
+
+    private async Task DeleteOldMeasurements()
+    {
+        var dialogParams = new Dictionary<string, object>
+        {
+            {"measurements", true}
+        };
+        await DialogService.OpenAsync<DataDialog>("Usuń pomiary", dialogParams, new DialogOptions() { CloseDialogOnOverlayClick = true, Resizable = true, Draggable = true, Width = "300px", });
+        await controller.SearchMeasurementsAsync();
+
+    }
+
+    private async Task DeleteOldRoutes()
+    {
+        var dialogParams = new Dictionary<string, object>
+        {
+            {"measurements", false}
+        };
+        await DialogService.OpenAsync<DataDialog>("Usuń trasy", dialogParams, new DialogOptions() { CloseDialogOnOverlayClick = true, Resizable = true, Draggable = true, Width = "300px", });
+        await controller.SearchOldRoutesAsync();
+    }
+
+    private async Task RouteDumpsters(string id)
+    {
+        NaviManager.NavigateTo("/dumpsters/" + id);
+    }
+    private async Task RouteVehicle(string id)
+    {
+        NaviManager.NavigateTo("/vehicles/" + id);
+    }
+}
+
+        <style>
+            .charts{
+                padding-top:20px;
+                padding-bottom:20px;
+            }
+        </style>

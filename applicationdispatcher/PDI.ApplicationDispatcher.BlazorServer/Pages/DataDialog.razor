@@ -1,0 +1,138 @@
+﻿@page "/datadialog"
+@inject IController controller
+@inject IModel model
+@inject NotificationService NotificationService
+@inject DialogService dialogService
+@if(measurements == true)
+{
+    <div class="d-flex flex-row">
+        <div class="d-flex flex-column" style="row-gap: 10px;">
+            <h6>Usuń pomiary starsze od:</h6>
+            <div class="rz-p-12 rz-text-align-center">
+                <RadzenDatePicker @bind-Value=@value />
+            </div>
+            <RadzenButton Click=@DeleteMeasurements Icon="delete" Text="USUŃ"
+                      Style="color: white; background-color:rgb(181, 21, 10);" Disabled=@IsDisabled() />
+        </div>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-row">
+        <div class="d-flex flex-column" style="row-gap: 10px;">
+            <h6>Usuń trasy starsze od:</h6>
+            <div class="rz-p-12 rz-text-align-center">
+                <RadzenDatePicker @bind-Value=@value />
+            </div>
+            <RadzenButton Click=@DeleteRoutes Icon="delete" Text="USUŃ"
+                      Style="color: white; background-color:rgb(181, 21, 10);" Disabled=@IsDisabled() />
+        </div>
+    </div>
+}
+
+
+
+
+@code {
+    [Parameter] public bool measurements { get; set; }
+    string date;
+    DateTime? value = null;
+    protected override async Task OnInitializedAsync()
+    {
+        //if (edit)
+        //{
+        //    id = dumpster.Id;
+        //    state = dumpster.State;
+        //    capacity = dumpster.Capacity;
+        //    locX = dumpster.Location.X;
+        //    locY = dumpster.Location.Y;
+        //}
+    }
+
+    async Task DeleteMeasurements()
+    {
+        //DumpsterData dumpster = new DumpsterData()
+        //    {
+        //        State = state.Value,
+        //        Capacity = capacity.Value,
+        //        Location = new LocationData() {X=locX.Value, Y=locY.Value},
+        //    };
+        //string response = await controller.AddDumpsterAsync(dumpster);
+
+        //if (response == Message.GetMessage(MessageEnum.success))
+        //{
+        //    NotificationService.Notify(new NotificationMessage
+        //        {
+        //            Severity = NotificationSeverity.Success,
+        //            Summary = "Sukces!",
+        //            Duration = 3000,
+        //            Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+        //        });
+        //}
+        //else
+        //{
+        //    NotificationService.Notify(new NotificationMessage
+        //        {
+        //            Severity = NotificationSeverity.Error,
+        //            Summary = "Błąd!",
+        //            Detail = response,
+        //            Duration = 3000,
+        //            Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+        //        });
+        //}
+
+        //dialogService.Close();
+        //refresh
+        //busy button
+        //close with parameter
+    }
+
+    async Task DeleteRoutes()
+    {
+        //DumpsterData dumpster = new DumpsterData()
+        //    {
+        //        Id = id,
+        //        State = state.Value,
+        //        Capacity = capacity.Value,
+        //        Location = new LocationData() { X = locX.Value, Y = locY.Value },
+        //    };
+        //string response = await controller.EditDumpsterAsync(dumpster);
+
+        //if (response == Message.GetMessage(MessageEnum.success))
+        //{
+        //    NotificationService.Notify(new NotificationMessage
+        //        {
+        //            Severity = NotificationSeverity.Success,
+        //            Summary = "Sukces!",
+        //            Duration = 3000,
+        //            Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+        //        });
+        //}
+        //else
+        //{
+        //    NotificationService.Notify(new NotificationMessage
+        //        {
+        //            Severity = NotificationSeverity.Error,
+        //            Summary = "Błąd!",
+        //            Detail = response,
+        //            Duration = 3000,
+        //            Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+        //        });
+        //}
+
+        //dialogService.Close();
+        //refresh
+        //busy button
+        //close with parameter
+    }
+
+    bool IsDisabled()
+    {
+        if (value == null)
+        {
+            return true;
+        }
+        return false;
+    }
+}
+

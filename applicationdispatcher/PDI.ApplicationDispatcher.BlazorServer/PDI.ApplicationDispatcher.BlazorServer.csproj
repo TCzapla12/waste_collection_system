@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>PDI.ApplicationDispatcher.BlazorServer</AssemblyName>
+    <RootNamespace>PDI.ApplicationDispatcher.BlazorServer</RootNamespace>
+    <UserSecretsId>5ea87fc5-2577-4313-90c2-ff65c3451f86</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Controller\PDI.ApplicationDispatcher.Controller.csproj" />
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Model\PDI.ApplicationDispatcher.Model.csproj" />
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Tests\PDI.ApplicationDispatcher.Tests.csproj" />
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Utilities\PDI.ApplicationDispatcher.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="View\Converters\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
+    <PackageReference Include="Radzen.Blazor" Version="4.4.6" />
+  </ItemGroup>
+
+</Project>
