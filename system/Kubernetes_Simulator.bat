@@ -1,0 +1,1 @@
+kubectl attach simulationmodule-sensors-0 -it
