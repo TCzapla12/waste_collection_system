@@ -52,9 +52,7 @@ namespace PDI.AppServiceDispatcher.Rest
 
                 app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "PDI.AppServiceDispatcher v1"));
             }
-            /* AT
-            app.UseHttpsRedirection( );
-            */
+
             app.UseRouting();
 
             app.UseAuthorization();
