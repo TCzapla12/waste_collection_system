@@ -1,0 +1,20 @@
+[
+  {
+    "DumpsterId": "0",
+    "DateTime": "2015-04-23T18:20:43",
+    "Usage": 0,
+    "Id": "0"
+  },
+  {
+    "DumpsterId": "0",
+    "DateTime": "2015-04-23T18:21:24",
+    "Usage": 5,
+    "Id": "1"
+  },
+  {
+    "DumpsterId": "1",
+    "DateTime": "2017-04-23T18:21:51",
+    "Usage": 13,
+    "Id": "2"
+  }
+]
