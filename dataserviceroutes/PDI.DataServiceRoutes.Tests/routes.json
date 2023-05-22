@@ -1,0 +1,28 @@
+[
+  {
+    "VehicleId": "vehicle10",
+    "DumpstersIds": [
+      "dumpster10",
+      "dumpster20"
+    ],
+    "State": "started",
+    "Id": "route10",
+    "Distance": 1.123,
+    "CreateDate": "2018-04-23T13:06:43",
+    "StartDate": "2018-04-23T13:44:43",
+    "FinishDate": "2000-04-23T13:20:43"
+  },
+  {
+    "VehicleId": "vehicle",
+    "DumpstersIds": [
+      "dumpster11",
+      "dumpster21"
+    ],
+    "State": "notStarted",
+    "Id": "route11",
+    "Distance": 0.256,
+    "CreateDate": "2018-04-23T13:20:43",
+    "StartDate": "2000-04-23T13:20:43",
+    "FinishDate": "2000-04-23T13:20:43"
+  }
+]

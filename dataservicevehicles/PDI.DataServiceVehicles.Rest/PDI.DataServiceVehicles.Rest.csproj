@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>fc864a6d-e742-4a3b-bfa5-981f7b515635</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="vehicles.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="vehicles.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.5" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.DataServiceVehicles.Logic\PDI.DataServiceVehicles.Logic.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceVehicles.Rest.Model\PDI.DataServiceVehicles.Rest.Model.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceVehicles.Rest.Tests\PDI.DataServiceVehicles.Rest.Tests.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceVehicles.Tests\PDI.DataServiceVehicles.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

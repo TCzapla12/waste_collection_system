@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.DataServiceRoutes.Logic\PDI.DataServiceRoutes.Logic.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceRoutes.Model\PDI.DataServiceRoutes.Model.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceRoutes.Rest.Model\PDI.DataServiceRoutes.Rest.Model.csproj" />
+  </ItemGroup>
+
+</Project>

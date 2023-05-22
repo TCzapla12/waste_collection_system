@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataservice-routes  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataservice-routes
+  template:
+    metadata:
+      labels:
+        app: dataservice-routes
+    spec:
+      containers:
+      - name: dataservice-routes-rest
+        image: tczaplic/pdi:dataserviceroutesrest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataservice-routes-api
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30083
+  selector:
+    app: dataservice-routes
