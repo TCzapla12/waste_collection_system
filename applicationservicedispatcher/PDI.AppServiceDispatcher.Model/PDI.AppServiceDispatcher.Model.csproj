@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Configurations>Debug;Release;Simulation</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.AppServiceDispatcher.Utilities\PDI.AppServiceDispatcher.Utilities.csproj" />
+  </ItemGroup>
+</Project>

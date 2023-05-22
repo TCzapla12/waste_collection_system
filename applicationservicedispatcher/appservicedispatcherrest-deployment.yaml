@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appservice-dispatcher  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appservice-dispatcher
+  template:
+    metadata:
+      labels:
+        app: appservice-dispatcher
+    spec:
+      containers:
+      - name: appservice-dispatcher-rest
+        image: tczaplic/pdi:appservicedispatcherrest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appservice-dispatcher-api
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30084
+  selector:
+    app: appservice-dispatcher
