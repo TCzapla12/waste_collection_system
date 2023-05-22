@@ -1,0 +1,27 @@
+﻿#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+#For more information, please see https://aka.ms/containercompat
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+LABEL stage=processingservicesensorsrest_build
+WORKDIR /src
+COPY ["PDI.ProcessingServiceSensors.Rest/PDI.ProcessingServiceSensors.Rest.csproj", "PDI.ProcessingServiceSensors.Rest/"]
+COPY ["PDI.ProcessingServiceSensors.Tests/PDI.ProcessingServiceSensors.Tests.csproj", "PDI.ProcessingServiceSensors.Tests/"]
+COPY ["PDI.ProcessingServiceSensors.Logic/PDI.ProcessingServiceSensors.Logic.csproj", "PDI.ProcessingServiceSensors.Logic/"]
+COPY ["PDI.ProcessingServiceSensors.Model/PDI.ProcessingServiceSensors.Model.csproj", "PDI.ProcessingServiceSensors.Model/"]
+COPY ["PDI.ProcessingServiceSensors.Rest.Tests/PDI.ProcessingServiceSensors.Rest.Tests.csproj", "PDI.ProcessingServiceSensors.Rest.Tests/"]
+COPY ["PDI.ProcessingServiceSensors.Rest.Model/PDI.ProcessingServiceSensors.Rest.Model.csproj", "PDI.ProcessingServiceSensors.Rest.Model/"]
+COPY ["PDI.ProcessingServiceSensors.Utilities/PDI.ProcessingServiceSensors.Utilities.csproj", "PDI.ProcessingServiceSensors.Utilities/"]
+RUN dotnet restore "PDI.ProcessingServiceSensors.Rest/PDI.ProcessingServiceSensors.Rest.csproj"
+COPY . .
+WORKDIR "/src/PDI.ProcessingServiceSensors.Rest"
+RUN dotnet build "PDI.ProcessingServiceSensors.Rest.csproj" -c Release -o /app/build
+RUN dotnet publish "PDI.ProcessingServiceSensors.Rest.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+EXPOSE 80
+EXPOSE 443
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "PDI.ProcessingServiceSensors.Rest.dll"]

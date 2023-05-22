@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processingservice-routes  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: processingservice-routes
+  template:
+    metadata:
+      labels:
+        app: processingservice-routes
+    spec:
+      containers:
+      - name: processingservice-routes-rest
+        image: tczaplic/pdi:processingserviceroutesrest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: processingservice-routes-api
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30085
+  selector:
+    app: processingservice-routes

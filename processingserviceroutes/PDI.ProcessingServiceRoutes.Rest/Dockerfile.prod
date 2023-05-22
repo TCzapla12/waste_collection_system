@@ -1,0 +1,27 @@
+﻿#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+#For more information, please see https://aka.ms/containercompat
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+LABEL stage=processingserviceroutesrest_build
+WORKDIR /src
+COPY ["PDI.ProcessingServiceRoutes.Rest/PDI.ProcessingServiceRoutes.Rest.csproj", "PDI.ProcessingServiceRoutes.Rest/"]
+COPY ["PDI.ProcessingServiceRoutes.Tests/PDI.ProcessingServiceRoutes.Tests.csproj", "PDI.ProcessingServiceRoutes.Tests/"]
+COPY ["PDI.ProcessingServiceRoutes.Logic/PDI.ProcessingServiceRoutes.Logic.csproj", "PDI.ProcessingServiceRoutes.Logic/"]
+COPY ["PDI.ProcessingServiceRoutes.Model/PDI.ProcessingServiceRoutes.Model.csproj", "PDI.ProcessingServiceRoutes.Model/"]
+COPY ["PDI.ProcessingServiceRoutes.Rest.Tests/PDI.ProcessingServiceRoutes.Rest.Tests.csproj", "PDI.ProcessingServiceRoutes.Rest.Tests/"]
+COPY ["PDI.ProcessingServiceRoutes.Rest.Model/PDI.ProcessingServiceRoutes.Rest.Model.csproj", "PDI.ProcessingServiceRoutes.Rest.Model/"]
+COPY ["PDI.ProcessingServiceRoutes.Utilities/PDI.ProcessingServiceRoutes.Utilities.csproj", "PDI.ProcessingServiceRoutes.Utilities/"]
+RUN dotnet restore "PDI.ProcessingServiceRoutes.Rest/PDI.ProcessingServiceRoutes.Rest.csproj"
+COPY . .
+WORKDIR "/src/PDI.ProcessingServiceRoutes.Rest"
+RUN dotnet build "PDI.ProcessingServiceRoutes.Rest.csproj" -c Release -o /app/build
+RUN dotnet publish "PDI.ProcessingServiceRoutes.Rest.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+EXPOSE 80
+EXPOSE 443
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "PDI.ProcessingServiceRoutes.Rest.dll"]

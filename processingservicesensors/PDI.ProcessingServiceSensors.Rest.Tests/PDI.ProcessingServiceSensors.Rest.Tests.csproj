@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.ProcessingServiceSensors.Logic\PDI.ProcessingServiceSensors.Logic.csproj" />
+    <ProjectReference Include="..\PDI.ProcessingServiceSensors.Model\PDI.ProcessingServiceSensors.Model.csproj" />
+    <ProjectReference Include="..\PDI.ProcessingServiceSensors.Rest.Model\PDI.ProcessingServiceSensors.Rest.Model.csproj" />
+  </ItemGroup>
+
+</Project>
