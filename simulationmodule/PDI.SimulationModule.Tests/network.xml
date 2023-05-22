@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<net:Network xmlns:net="http://tempuri.org/network.xsd" modified="2020-12-01T12:00:00.000">
+  <net:Nodes>
+    <net:Node id="node1">
+      <net:Position x="0" y="0" />
+    </net:Node>
+    <net:Node id="node2">
+      <net:Position x="1" y="1" />
+    </net:Node>
+    <net:Node id="node3">
+      <net:Position x="0" y="1" />
+    </net:Node>
+  </net:Nodes>
+  <net:Links>
+    <net:Link id="link1" type="undirected" nodeA="node1" nodeB="node2" />
+    <net:Link id="link2" type="directed" nodeA="node2" nodeB="node3" />
+  </net:Links>
+</net:Network>
