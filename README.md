@@ -1,6 +1,6 @@
 # waste_collection_system
-System wspomagający proces odbioru odpadów
+The system supporting the waste collection process
 
-Głównym zadaniem systemu jest wspomaganie procesu odbioru odpadów. Stworzone zostały elementy pozwalające optymalizować trasy przejazdu dla śmieciarek. Trasy są generowane na podstawie analizy pomiarów poziomu zapełnienia śmietników oraz danych o ich lokalizacji.
+The main task of the system is to support the waste collection process. As part of engineering work, elements were implemented to optimize routes for garbage trucks. Routes are generated based on the analysis of the fill level measurements of the garbage cans and their location data.
 
-Architektura systemu bazuje na architekturze zorientowanej na usługi. System składa się z mikrousług danych, mikrousług przetwarzających, mikrousługi aplikacyjnej oraz aplikacji. Zdefiniowane zostały cztery mikrousługi danych: Śmietniki, Pomiary, Śmieciarki, Trasy. Dodatkowo, mikrousługa przetwarzająca Trasowanie oraz mikrousługa przetwarzająca Czujniki wspomagają procesy zachodzące w systemie. Mikrousługa aplikacyjna Dyspozytor wspomaga aplikację Dyspozytor wykonując odpowiednie operacje oraz przekazując dane.
+The system architecture is service-oriented (SOA). It consists of microservices, which have been divided into three categories: data, processing, application and web application for facility dispatcher. Four data microservices have been defined: Dumpsters, Measurements, Vehicles, and Routes. Additionally, the Routing microservice and the Sensors microservice support the processes occurring in the system. The Dispatcher application microservice supports the Dispatcher application by performing appropriate operations and transmitting data.
