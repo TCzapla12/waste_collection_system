@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.DataServiceVehicles.Logic\PDI.DataServiceVehicles.Logic.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceVehicles.Model\PDI.DataServiceVehicles.Model.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceVehicles.Rest.Model\PDI.DataServiceVehicles.Rest.Model.csproj" />
+  </ItemGroup>
+
+</Project>

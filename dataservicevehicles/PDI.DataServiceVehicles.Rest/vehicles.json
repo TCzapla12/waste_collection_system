@@ -1,0 +1,57 @@
+[
+  {
+    "Brand": "Mercedes",
+    "Model": "Axor",
+    "Plate": "WWL XXXX1",
+    "State": "enabled",
+    "Capacity": 25000,
+    "Load": 26000,
+    "Consumption": 40,
+    "Fuel": "ON",
+    "Id": "0"
+  },
+  {
+    "Brand": "Mercedes",
+    "Model": "Axor",
+    "Plate": "WWL XXXX2",
+    "State": "enabled",
+    "Capacity": 25000,
+    "Load": 26000,
+    "Consumption": 40,
+    "Fuel": "ON",
+    "Id": "1"
+  },
+  {
+    "Brand": "Mercedes",
+    "Model": "Econic",
+    "Plate": "WWL XXXX3",
+    "State": "enabled",
+    "Capacity": 19000,
+    "Load": 26000,
+    "Consumption": 35,
+    "Fuel": "ON",
+    "Id": "2"
+  },
+  {
+    "Brand": "Mercedes",
+    "Model": "Econic",
+    "Plate": "WWL XXXX4",
+    "State": "enabled",
+    "Capacity": 19000,
+    "Load": 26000,
+    "Consumption": 35,
+    "Fuel": "ON",
+    "Id": "3"
+  },
+  {
+    "Brand": "Mercedes",
+    "Model": "Econic",
+    "Plate": "WWL XXXX5",
+    "State": "enabled",
+    "Capacity": 19000,
+    "Load": 26000,
+    "Consumption": 35,
+    "Fuel": "ON",
+    "Id": "4"
+  }
+]

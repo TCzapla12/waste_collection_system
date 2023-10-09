@@ -1,0 +1,24 @@
+[
+  {
+    "Brand": "Mercedes",
+    "Model": "Axor",
+    "Plate": "WWL",
+    "State": "enabled",
+    "Capacity": 22000,
+    "Load": 20000,
+    "Consumption": 40,
+    "Fuel": "ON",
+    "Id": "vehicle10"
+  },
+  {
+    "Brand": "Mercedes",
+    "Model": "Faun",
+    "Plate": "WWL",
+    "State": "disabled",
+    "Capacity": 20000,
+    "Load": 26000,
+    "Consumption": 50,
+    "Fuel": "ON",
+    "Id": "vehicle11"
+  }
+]
