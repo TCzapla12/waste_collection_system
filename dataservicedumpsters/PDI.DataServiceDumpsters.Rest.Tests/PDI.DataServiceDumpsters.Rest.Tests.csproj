@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.DataServiceDumpsters.Logic\PDI.DataServiceDumpsters.Logic.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceDumpsters.Model\PDI.DataServiceDumpsters.Model.csproj" />
+    <ProjectReference Include="..\PDI.DataServiceDumpsters.Rest.Model\PDI.DataServiceDumpsters.Rest.Model.csproj" />
+  </ItemGroup>
+
+</Project>

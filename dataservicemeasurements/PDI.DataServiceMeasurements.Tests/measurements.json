@@ -1,0 +1,14 @@
+[
+  {
+    "DumpsterId": "dumpster1",
+    "DateTime": "2022-10-04T16:42:01.8997816+02:00",
+    "Usage": 10,
+    "Id": "measurement10"
+  },
+  {
+    "DumpsterId": "dumpster2",
+    "DateTime": "0001-01-01T00:00:00",
+    "Usage": 20,
+    "Id": "measurement11"
+  }
+]

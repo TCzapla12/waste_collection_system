@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataservice-measurements  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataservice-measurements
+  template:
+    metadata:
+      labels:
+        app: dataservice-measurements
+    spec:
+      containers:
+      - name: dataservice-measurements-rest
+        image: tczaplic/pdi:dataservicemeasurementsrest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataservice-measurements-api
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30081
+  selector:
+    app: dataservice-measurements

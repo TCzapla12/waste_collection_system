@@ -1,0 +1,252 @@
+[
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35643758309944,
+      "Y": 21.24568810486082
+    },
+    "Id": "0"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.356296473891746,
+      "Y": 21.24496080030688
+    },
+    "Id": "1"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.356235002814465,
+      "Y": 21.244258194203184
+    },
+    "Id": "2"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.355888713617844,
+      "Y": 21.24413370300623
+    },
+    "Id": "3"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35522497838055,
+      "Y": 21.244780784180353
+    },
+    "Id": "4"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.3543325506875,
+      "Y": 21.245596167806013
+    },
+    "Id": "5"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35382302228488,
+      "Y": 21.246030693054195
+    },
+    "Id": "6"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35341080549603,
+      "Y": 21.24653940114385
+    },
+    "Id": "7"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.3529837250787,
+      "Y": 21.246750673071922
+    },
+    "Id": "8"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35247938263638,
+      "Y": 21.247322624090227
+    },
+    "Id": "9"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.3520858131227,
+      "Y": 21.247707807349077
+    },
+    "Id": "10"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35192117127388,
+      "Y": 21.2484186471967
+    },
+    "Id": "11"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35221226530917,
+      "Y": 21.249135760269624
+    },
+    "Id": "12"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35268047879598,
+      "Y": 21.24937610926461
+    },
+    "Id": "13"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.353751506304455,
+      "Y": 21.2486615576877
+    },
+    "Id": "14"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35460058648657,
+      "Y": 21.248062034266276
+    },
+    "Id": "15"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35431450320498,
+      "Y": 21.247670910817327
+    },
+    "Id": "16"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.354502638617994,
+      "Y": 21.247053610512133
+    },
+    "Id": "17"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35536440264231,
+      "Y": 21.246243764133098
+    },
+    "Id": "18"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.355885081719634,
+      "Y": 21.245695027624144
+    },
+    "Id": "19"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35752195308356,
+      "Y": 21.244387975581386
+    },
+    "Id": "20"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35917980348204,
+      "Y": 21.248429387716335
+    },
+    "Id": "21"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.357960586198544,
+      "Y": 21.253400542499392
+    },
+    "Id": "22"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.3553390133171,
+      "Y": 21.25418410595627
+    },
+    "Id": "23"
+  },
+  {
+    "State": "enabled",
+    "Capacity": 100,
+    "Usage": 0,
+    "Location": {
+      "X": 52.35707801147936,
+      "Y": 21.250645771181052
+    },
+    "Id": "24"
+  }
+]
