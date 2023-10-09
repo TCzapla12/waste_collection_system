@@ -1,0 +1,48 @@
+﻿<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:net="http://tempuri.org/network.xsd" targetNamespace="http://tempuri.org/network.xsd" elementFormDefault="qualified">
+
+  <xsd:element name="Network" type="net:Network" />
+
+  <xsd:complexType name="Network">
+    <xsd:sequence>
+      <xsd:element name="Nodes" type="net:Nodes" minOccurs="1" maxOccurs="1" />
+      <xsd:element name="Links" type="net:Links" minOccurs="1" maxOccurs="1" />
+    </xsd:sequence>
+    <xsd:attribute name="modified" type="xsd:dateTime" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="Nodes">
+    <xsd:sequence>
+      <xsd:element name="Node" type="net:Node" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Links">
+    <xsd:sequence>
+      <xsd:element name="Link" type="net:Link" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Node">
+    <xsd:sequence>
+      <xsd:element name="Position" type="net:Point" minOccurs="1" maxOccurs="1" />
+    </xsd:sequence>
+    <xsd:attributeGroup ref="net:Id" />
+  </xsd:complexType>
+
+  <xsd:complexType name="Link">
+    <xsd:attributeGroup ref="net:Id" />
+    <xsd:attribute name="type" type="xsd:string" use="required" />
+    <xsd:attribute name="nodeA" type="xsd:IDREF" use="required" />
+    <xsd:attribute name="nodeB" type="xsd:IDREF" use="required" />
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="Id">
+    <xsd:attribute name="id" type="xsd:ID" use="required" />
+  </xsd:attributeGroup>
+    
+  <xsd:complexType name="Point">
+    <xsd:attribute name="x" type="xsd:double" use="required" />
+    <xsd:attribute name="y" type="xsd:double" use="required" />
+  </xsd:complexType>
+
+</xsd:schema>
