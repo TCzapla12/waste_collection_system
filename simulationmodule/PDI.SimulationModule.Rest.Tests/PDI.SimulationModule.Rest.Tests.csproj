@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.SimulationModule.Logic\PDI.SimulationModule.Logic.csproj" />
+    <ProjectReference Include="..\PDI.SimulationModule.Model\PDI.SimulationModule.Model.csproj" />
+    <ProjectReference Include="..\PDI.SimulationModule.Rest.Model\PDI.SimulationModule.Rest.Model.csproj" />
+  </ItemGroup>
+
+</Project>

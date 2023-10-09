@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.SimulationModule.Model\PDI.SimulationModule.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Converters\" />
+    <Folder Include="Model\" />
+  </ItemGroup>
+
+</Project>
