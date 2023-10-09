@@ -1,0 +1,49 @@
+﻿@page "/map"
+@page "/map/{id}"
+@inject IController controller
+@inject IModel model
+
+<RadzenGoogleMap ApiKey="<API_KEY>" style="height: 800px" Zoom=@zoom Center=@(new GoogleMapPosition() { Lat = centerLat, Lng = centerLng }) MapClick=@OnMapClick MarkerClick=@OnMarkerClick>
+    <Markers>
+        @foreach(DumpsterData dumpster in model.DumpstersList)
+        {
+            <RadzenGoogleMapMarker Title="@Title(dumpster)" Label="@dumpster.Id" Position=@(new GoogleMapPosition() { Lat = dumpster.Location.X, Lng = dumpster.Location.Y }) />
+        }
+    </Markers>
+</RadzenGoogleMap>
+
+@code{
+    [Parameter] public string id { get; set; }
+    int zoom = 13;
+    double centerLat = 52.354;
+    double centerLng = 21.25;
+    string Title(DumpsterData data)
+    {
+        return "Zapełnienie: " + data.Usage.ToString() + "%\nPojemność: " + data.Capacity.ToString() + "l\nStan: " + data.State.GetDisplayDescription();
+    }
+
+    void OnMapClick(GoogleMapClickEventArgs args)
+    {
+        // console.Log($"Map clicked at Lat: {args.Position.Lat}, Lng: {args.Position.Lng}");
+        // 52.35438227146408, 21.255870450969574
+        //52.355956057960995, 21.24623265402676
+    }
+
+    void OnMarkerClick(RadzenGoogleMapMarker marker)
+    {
+        // console.Log($"Map {marker.Title} marker clicked. Marker position -> Lat: {marker.Position.Lat}, Lng: {marker.Position.Lng}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await controller.SearchDumpstersAsync();
+        if (id != null)
+        {
+            zoom = 18;
+            int foundIndex = model.DumpstersList.FindIndex((d) => d.Id == id);
+            LocationData ld = model.DumpstersList[foundIndex].Location;
+            centerLat = ld.X;
+            centerLng = ld.Y;
+        }
+    }
+}

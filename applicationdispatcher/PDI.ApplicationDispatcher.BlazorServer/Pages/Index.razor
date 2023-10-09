@@ -1,0 +1,206 @@
+﻿@page "/"
+@inject IController controller
+@inject IModel model
+
+<div class="charts">
+    <RadzenCard Class="" Style="width: 500px">
+            <RadzenChart>
+                <RadzenDonutSeries Data="@dumpsterItems" CategoryProperty="State" ValueProperty="Value">
+                    <ChildContent>
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                    </ChildContent>
+                    <TitleTemplate>
+                        <div class="rz-donut-content">
+                            <div>Śmietniki</div>
+                        </div>
+                    </TitleTemplate>
+                </RadzenDonutSeries>
+            </RadzenChart>
+
+    </RadzenCard>
+    <RadzenCard Class="" Style="width: 500px">
+        <RadzenChart>
+            <RadzenDonutSeries Data="@vehicleItems" CategoryProperty="State" ValueProperty="Value">
+                <ChildContent>
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </ChildContent>
+                <TitleTemplate>
+                    <div class="rz-donut-content">
+                        <div>Śmieciarki</div>
+                    </div>
+                </TitleTemplate>
+            </RadzenDonutSeries>
+        </RadzenChart>
+    </RadzenCard>
+    <RadzenCard Class="" Style="width: 500px">
+        <RadzenChart>
+            <RadzenDonutSeries Data="@routeItems" CategoryProperty="State" ValueProperty="Value">
+                <ChildContent>
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </ChildContent>
+                <TitleTemplate>
+                    <div class="rz-donut-content">
+                        <div>Trasy</div>
+                    </div>
+                </TitleTemplate>
+            </RadzenDonutSeries>
+        </RadzenChart>
+
+    </RadzenCard>
+</div>
+@code {
+    bool showDataLabels = false;
+
+    class DataItem
+    {
+        public string State { get; set; }
+        public int Value { get; set; }
+    }
+
+    DataItem[] dumpsterItems = new DataItem[]
+    {
+        new DataItem
+        {
+            State = "Aktywne",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Nieaktywne",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Przypisane",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Awaria (aktywne)",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Awaria (przypisane)",
+            Value = 0
+        },
+    };
+    DataItem[] vehicleItems = new DataItem[]
+    {
+        new DataItem
+        {
+            State = "Dostępne",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Niedostępne",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Zbieranie",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Oczekiwanie",
+            Value = 0
+        }
+    };
+    DataItem[] routeItems = new DataItem[]
+    {
+        new DataItem
+        {
+            State = "Zbieranie",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Oczekiwanie",
+            Value = 0
+        },
+        new DataItem
+        {
+            State = "Zakończone",
+            Value = 0
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await controller.SearchDumpstersAsync();
+        await controller.SearchVehiclesAsync();
+        await controller.SearchOldRoutesAsync();
+
+        foreach (DumpsterData dumpster in model.DumpstersList)
+        {
+            if (dumpster.State == DumpsterState.enabled)
+            {
+                dumpsterItems[0].Value++;
+            }
+            else if (dumpster.State == DumpsterState.disabled)
+            {
+                dumpsterItems[1].Value++;
+            }
+            else if (dumpster.State == DumpsterState.assigned)
+            {
+                dumpsterItems[2].Value++;
+            }
+            else if (dumpster.State == DumpsterState.fault)
+            {
+                dumpsterItems[3].Value++;
+            }
+            else if (dumpster.State == DumpsterState.faultAssigned)
+            {
+                dumpsterItems[4].Value++;
+            }
+        }
+
+        foreach (VehicleData vehicle in model.VehiclesList)
+        {
+            if (vehicle.State == VehicleState.enabled)
+            {
+                vehicleItems[0].Value++;
+            }
+            else if (vehicle.State == VehicleState.disabled)
+            {
+                vehicleItems[1].Value++;
+            }
+            else if (vehicle.State == VehicleState.working)
+            {
+                vehicleItems[2].Value++;
+            }
+            else if (vehicle.State == VehicleState.assigned)
+            {
+                vehicleItems[3].Value++;
+            }
+        }
+
+        foreach (PDI.ApplicationDispatcher.Model.RouteData route in model.OldRoutesList)
+        {
+            if (route.State == RouteState.started)
+            {
+                routeItems[0].Value++;
+            }
+            else if (route.State == RouteState.notStarted)
+            {
+                routeItems[1].Value++;
+            }
+            else if (route.State == RouteState.finished)
+            {
+                routeItems[2].Value++;
+            }
+        }
+    }
+}
+
+<style>
+    .charts {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: 8px;
+        row-gap: 16px;
+    }
+</style>

@@ -1,0 +1,221 @@
+﻿@page "/vehicles"
+@page "/vehicles/{id}"
+@inject DialogService DialogService
+@inject IController controller
+@inject IModel model
+
+<h1>Śmieciarki</h1>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    @if (id != null)
+    {
+        <p class="mb-0">Śmieciarka przypisana do trasy.</p>
+    }
+    else
+    {
+        <p class="mb-0">Wszystkie śmieciarki należące do zakładu.</p>
+    }
+
+    <RadzenButton Click=@AddVehicle Icon="add" Text="DODAJ ŚMIECIARKĘ"
+                  Style="color: white; width: 30%; font-size: 15px; background-color:rgb(60, 139, 55);" />
+</div>
+
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Simple" FilterText="" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@vehicles" TItem="VehicleData" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.And" EmptyText="Brak danych."
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+    <Columns>
+        <RadzenDataGridColumn TItem="VehicleData" Property="Id" Filterable="true" Title="ID" Frozen="true" Width="50px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="VehicleData" Property="Brand" Filterable="true" Title="MARKA" Width="100px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="VehicleData" Property="Model" Filterable="true" Title="MODEL" Width="100px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="VehicleData" Property="Plate" Filterable="true" Title="REJESTRACJA" Width="100px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="VehicleData" Property="State" Filterable="true" Title="STAN" Width="80px" TextAlign="TextAlign.Center" FilterValue="@currentState">
+            <FilterTemplate>
+                <RadzenDropDown @bind-Value="@currentState"
+                                TextProperty="Text"
+                                AllowClear="true"
+                                ValueProperty="Value"
+                                Style="width: 100%; height: 35px; margin-bottom: 0.5rem;"
+                                Data="@(Enum.GetValues(typeof(VehicleState)).Cast<VehicleState?>().Select(t => new { Text = $"{t.GetDisplayDescription()}", Value = t }))" />
+            </FilterTemplate>
+            <Template Context="data">
+                <div class="d-flex justify-content-between px-2">
+                    @if (data.State == VehicleState.enabled)
+                    {
+                        <RadzenIcon Icon="play_arrow" Style="color:green" />
+                        <span class="align-content-center" style="width: 100px;">@data.State.GetDisplayDescription()</span>
+                    }
+                    else if (data.State == VehicleState.disabled)
+                    {
+                        <RadzenIcon Icon="stop" Style="color:red" />
+                        <span class="align-content-center" style="width: 100px;">@data.State.GetDisplayDescription()</span>
+                    }
+                    else if (data.State == VehicleState.working)
+                    {
+                        <RadzenIcon Icon="forward" Style="color:darkgreen" />
+                        <span class="align-content-center" style="width: 100px;">@data.State.GetDisplayDescription()</span>
+                    }
+                    else
+                    {
+                        <RadzenIcon Icon="pause" Style="color:yellowgreen" />
+                        <span class="align-content-center" style="width: 100px;">@data.State.GetDisplayDescription()</span>
+                    }
+                </div>
+
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="VehicleData" Property="Load" Filterable="true" Title="ŁADOWNOŚĆ [kg]" Width="90px" TextAlign="TextAlign.Center" FilterValue="@currentLoad">
+            <FilterTemplate>
+                <RadzenNumeric TValue="int?" Step="1000" Change=@(args => OnChange("load",args))
+                               Style="width: 100%; height: 35px; margin-bottom: 0.5rem;" />
+            </FilterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="VehicleData" Property="Capacity" Filterable="true" Title="POJEMNOŚĆ [l]" Width="90px" TextAlign="TextAlign.Center" FilterValue="@currentCapacity">
+            <FilterTemplate>
+                <RadzenNumeric TValue="int?" Step="1000" Change=@(args => OnChange("capacity",args))
+                               Style="width: 100%; height: 35px; margin-bottom: 0.5rem;" />
+            </FilterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="VehicleData" Property="Consumption" Filterable="true" Title="SPALANIE [l/100km]" Width="90px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="VehicleData" Property="Fuel" Filterable="true" Title="PALIWO" Width="70px" TextAlign="TextAlign.Center" FilterValue="@currentFuel">
+            <FilterTemplate>
+                <RadzenDropDown @bind-Value="@currentFuel"
+                                TextProperty="Text"
+                                AllowClear="true"
+                                ValueProperty="Value"
+                                Style="width: 100%; height: 35px; margin-bottom: 0.5rem;"
+                                Data="@(Enum.GetValues(typeof(Fuel)).Cast<Fuel?>().Select(t => new { Text = $"{t.GetDisplayDescription()}", Value = t }))" />
+            </FilterTemplate>
+            <Template Context="data">
+                <div class="d-flex justify-content-center">
+                    @if (data.Fuel == Fuel.ON)
+                    {
+                        <RadzenCard Style="color:white; background: black; width:30px; height: 30px; padding: inherit; display:flex; justify-content:center; font-weight: bold; align-items: center;">
+                            @data.Fuel.GetDisplayDescription()
+                        </RadzenCard>
+                    }
+                    else if (data.Fuel == Fuel.CNG)
+                    {
+                        <RadzenCard Style="color:white; background: darkgreen; width:40px; height: 30px; padding: inherit; display:flex; justify-content:center; font-weight: bold; align-items: center;">
+                            @data.Fuel.GetDisplayDescription()
+                        </RadzenCard>
+                    }
+                    else if (data.Fuel == Fuel.LPG)
+                    {
+                        <RadzenCard Style="color:white; background: red; width:40px; height: 30px; padding: inherit; display:flex; justify-content:center; font-weight: bold; align-items: center;">
+                            @data.Fuel.GetDisplayDescription()
+                        </RadzenCard>
+                    }
+                    else if (data.Fuel == Fuel.LNG)
+                    {
+                        <RadzenCard Style="color:white; background: royalblue; width:40px; height: 30px; padding: inherit; display:flex; justify-content:center; font-weight: bold; align-items: center;">
+                            @data.Fuel.GetDisplayDescription()
+                        </RadzenCard>
+                    }
+                    else if (data.Fuel == Fuel.Pb95 || data.Fuel == Fuel.Pb98 || data.Fuel == Fuel.E85)
+                    {
+                        <RadzenCard Style="color:white; background: green; width:40px; height: 30px; padding: inherit; display:flex; justify-content:center; font-weight: bold; align-items: center;">
+                            @data.Fuel.GetDisplayDescription()
+                        </RadzenCard>
+                    }
+                    else if (data.Fuel == Fuel.Electric)
+                    {
+                        <RadzenCard Style="background: #394039; width:30px; height: 30px; padding: inherit; display:flex; justify-content:center; align-items: center;">
+                            <RadzenIcon Icon="bolt" Style="color:yellow" />
+                        </RadzenCard>
+                    }
+                    else if (data.Fuel == Fuel.Hybrid)
+                    {
+                        <RadzenCard Style="color: blue;background: #dfdcd8; width:60px; height: 30px; padding: inherit; display:flex; justify-content:center; font-weight: bold; align-items: center; text-transform: uppercase">
+                            @data.Fuel
+                        </RadzenCard>
+                    }
+                    else
+                    {
+                        <RadzenCard Style="color: white; background: blue; width:30px; height: 30px; padding: inherit; display:flex; justify-content:center; font-weight: bold; align-items: center;">
+                            @data.Fuel.GetDisplayDescription()
+                        </RadzenCard>
+                    }
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="VehicleData" Property="State" Filterable="false" Sortable="false" Title="AKCJE" Width="100px" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                @if (data.State == VehicleState.enabled || data.State == VehicleState.disabled)
+                {
+                    <div class="d-flex justify-content-between">
+                        <RadzenButton Click=@(args => EditVehicle(data)) Icon="edit" Text="EDYTUJ"
+                                  Style="color: white; width: 49%; font-size: 13px; background-color:rgb(135, 131, 19); display: flex; justify-content: center; column-gap: 5px;" />
+                        <RadzenButton Click=@(args => OnClick(data.Id)) Icon="clear" Text="USUŃ"
+                                  Style="color: white; width: 49%; font-size: 13px; background-color:rgb(181, 21, 10); display: flex; justify-content: center; column-gap: 5px;" />
+                    </div>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    [Parameter] public string id { get; set; }
+    IEnumerable<VehicleData> vehicles;
+    VehicleState? currentState;
+    Fuel? currentFuel;
+    int? currentCapacity;
+    int? currentLoad;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await controller.SearchVehiclesAsync();
+        if (id != null)
+        {
+            vehicles = model.VehiclesList.Where(d => d.Id == id).ToList();
+        }
+        else
+        {
+            vehicles = model.VehiclesList;
+        }
+    }
+
+    void OnSelectedStateChange(object value)
+    {
+
+
+    }
+
+    async void OnClick(string id)
+    {
+        await controller.DeleteVehicleAsync(id);
+    }
+
+    void OnChange(string filter, dynamic value)
+    {
+        if (filter == "load")
+        {
+            currentLoad = value;
+        }
+        else if (filter == "capacity")
+        {
+            currentCapacity = value;
+        }
+    }
+
+    public async Task AddVehicle()
+    {
+        var dialogParams = new Dictionary<string, object>
+        {
+            {"edit", false}
+        };
+        await DialogService.OpenAsync<VehicleDialog>("Dodaj śmieciarkę", dialogParams, new DialogOptions() { CloseDialogOnOverlayClick = true, Resizable = true, Draggable = true, Width = "300px" });
+    }
+    public async Task EditVehicle(VehicleData data)
+    {
+        var dialogParams = new Dictionary<string, object>
+        {
+            {"edit", true},
+            {"vehicle", data}
+        };
+        await DialogService.OpenAsync<VehicleDialog>("Edytuj śmieciarkę", dialogParams, new DialogOptions() { CloseDialogOnOverlayClick = true, Resizable = true, Draggable = true, Width = "300px" });
+    }
+    //paginacja
+    //filtrowanie
+}

@@ -1,0 +1,179 @@
+﻿@page "/dumpsterdialog"
+@inject IController controller
+@inject IModel model
+@inject NotificationService NotificationService
+@inject DialogService dialogService
+<div class="d-flex flex-row">
+    <div class="d-flex flex-column" style="row-gap: 10px;">
+        <RadzenTextBox  Placeholder="Identyfikator" @bind-Value=@identy />
+
+        <RadzenDropDown Placeholder="Stan" @bind-Value="@state" TextProperty="Text" ValueProperty="Value"
+                        Data="@(Enum.GetValues(typeof(DumpsterState)).Cast<DumpsterState?>().Where(t => t == DumpsterState.enabled || t == DumpsterState.disabled || t == DumpsterState.fault)
+                .Select(t => new { Text = $"{t.GetDisplayDescription()}", Value = t }))" />
+
+
+        <RadzenNumeric TValue="int?" Placeholder="Pojemność [l]" Min="0" Step="10" @bind-Value=@capacity />
+
+        <RadzenNumeric TValue="double?" Placeholder="Lokalizacja X" Min="0" @bind-Value=@locX />
+
+        <RadzenNumeric TValue="double?" Placeholder="Lokalizacja Y" Min="0" @bind-Value=@locY />
+
+        @if(edit == false)
+        {
+            <RadzenButton Click=@AddDumpster Icon="add" Text="DODAJ"
+                      Style="color: white; background-color:rgb(60, 139, 55);" Disabled=@IsDisabled() />
+        }
+        else
+        {
+            <RadzenButton Click=@EditDumpster Icon="edit" Text="EDYTUJ"
+                      Style="color: white; background-color:rgb(60, 139, 55);" Disabled=@IsDisabled() />
+        }
+
+       
+    </div>
+    <RadzenGoogleMap ApiKey="<API_KEY>" style="height: 300px; width: 300px;" Zoom=@zoom Center=@(new GoogleMapPosition() { Lat = 52.354, Lng = 21.255 }) MapClick=@OnMapClick MarkerClick=@OnMarkerClick>
+        <Markers>
+            @foreach (DumpsterData dumpster in model.DumpstersList)
+            {
+                <RadzenGoogleMapMarker Title="" Label="@dumpster.Id" Position=@(new GoogleMapPosition() { Lat = dumpster.Location.X, Lng = dumpster.Location.Y }) />
+            }
+            @if(locX.HasValue && locY.HasValue){
+            <RadzenGoogleMapMarker Title="" Label="+" Position=@(new GoogleMapPosition() { Lat = locX.GetValueOrDefault(), Lng = locY.GetValueOrDefault() }) />
+            }
+        </Markers>
+    </RadzenGoogleMap>
+            
+
+</div>
+
+
+
+@code {
+    [Parameter] public bool edit { get; set; }
+    [Parameter] public DumpsterData dumpster { get; set; }
+    string id;
+    //DumpsterState? state;
+    //int? capacity;
+    //testing
+    DumpsterState? state;
+    int? capacity;
+    double? locX;
+    double? locY;
+    string? identy;
+
+    int zoom = 13;
+    bool showMadridMarker;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (edit)
+        {
+            id = dumpster.Id;
+            state = dumpster.State;
+            capacity = dumpster.Capacity;
+            locX = dumpster.Location.X;
+            locY = dumpster.Location.Y;
+        }
+    }
+
+    async Task AddDumpster()
+    {
+        DumpsterData dumpster = new DumpsterData()
+            {
+                State = state.Value,
+                Capacity = capacity.Value,
+                Location = new LocationData() {X=locX.Value, Y=locY.Value},
+            };
+        string response = await controller.AddDumpsterAsync(dumpster);
+
+        if (response == Message.GetMessage(MessageEnum.success))
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sukces!",
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Błąd!",
+                    Detail = response,
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+
+        dialogService.Close();
+        //refresh
+        //busy button
+        //close with parameter
+    }
+
+    async Task EditDumpster()
+    {
+        DumpsterData dumpster = new DumpsterData()
+            {
+                Id = id,
+                State = state.Value,
+                Capacity = capacity.Value,
+                Location = new LocationData() { X = locX.Value, Y = locY.Value },
+            };
+        string response = await controller.EditDumpsterAsync(dumpster);
+
+        if (response == Message.GetMessage(MessageEnum.success))
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sukces!",
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Błąd!",
+                    Detail = response,
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+
+        dialogService.Close();
+        //refresh
+        //busy button
+        //close with parameter
+    }
+
+    bool IsDisabled()
+    {
+        if (state == null || capacity == null || capacity == 0 || locX == null || locY == null || locX == 0 || locY == 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void OnMapClick(GoogleMapClickEventArgs args)
+    {
+        locX = args.Position.Lat;
+        locY = args.Position.Lng;
+        // console.Log($"Map clicked at Lat: {args.Position.Lat}, Lng: {args.Position.Lng}");
+        // 52.35438227146408, 21.255870450969574
+        //52.355956057960995, 21.24623265402676
+    }
+
+    void OnMarkerClick(RadzenGoogleMapMarker marker)
+    {
+        // console.Log($"Map {marker.Title} marker clicked. Marker position -> Lat: {marker.Position.Lat}, Lng: {marker.Position.Lng}");
+    }
+}
+

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Radzen.Blazor" Version="4.4.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Model\PDI.ApplicationDispatcher.Model.csproj" />
+    <ProjectReference Include="..\PDI.ApplicationDispatcher.Utilities\PDI.ApplicationDispatcher.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

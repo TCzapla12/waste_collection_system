@@ -1,0 +1,181 @@
+﻿@page "/vehicledialog"
+@inject IController controller
+@inject NotificationService NotificationService
+@inject DialogService dialogService
+
+<div class="d-flex flex-column" style="row-gap: 10px;">
+    <RadzenTextBox Placeholder="Marka" @bind-Value=@brand />
+
+    <RadzenTextBox Placeholder="Model" @bind-Value=@model />
+
+    <RadzenTextBox Placeholder="Rejestracja" @bind-Value=@plate />
+
+    <RadzenDropDown Placeholder="Stan" @bind-Value="@state" TextProperty="Text" ValueProperty="Value"
+                    Data="@(Enum.GetValues(typeof(VehicleState)).Cast<VehicleState?>().Where(t => t == VehicleState.enabled || t == VehicleState.disabled)
+                .Select(t => new { Text = $"{t.GetDisplayDescription()}", Value = t }))" />
+    <RadzenNumeric TValue="int?" Placeholder="Ładowność [kg]" Min="0" Step="1000" @bind-Value=@load />
+
+    <RadzenNumeric TValue="int?" Placeholder="Pojemność [l]" Min="0" Step="1000" @bind-Value=@capacity />
+
+    <RadzenNumeric TValue="int?" Placeholder="Spalanie [l/100km]" Min="0" @bind-Value=@consumption />
+
+    <RadzenDropDown Placeholder="Paliwo" @bind-Value="@fuel" TextProperty="Text" ValueProperty="Value"
+                    Data="@(Enum.GetValues(typeof(Fuel)).Cast<Fuel?>().Select(t => new { Text = $"{t.GetDisplayDescription()}", Value = t }))" />
+
+    @if (edit == false)
+    {
+        <RadzenButton Click=@AddVehicle Icon="add" Text="DODAJ"
+                  Style="color: white; background-color:rgb(60, 139, 55);" Disabled=@IsDisabled() />
+    }
+    else
+    {
+        <RadzenButton Click=@EditVehicle Icon="edit" Text="EDYTUJ"
+                  Style="color: white; background-color:rgb(60, 139, 55);" Disabled=@IsDisabled() />
+    }
+
+</div>
+
+
+@code {
+    [Parameter] public bool edit { get; set; }
+    [Parameter] public VehicleData vehicle { get; set; }
+    string id;
+    string? brand;
+    string? model;
+    string? plate;
+    VehicleState? state;
+    int? capacity;
+    int? consumption;
+    int? load;
+    Fuel? fuel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (edit)
+        {
+            id = vehicle.Id;
+            brand = vehicle.Brand;
+            model = vehicle.Model;
+            plate = vehicle.Plate;
+            state = vehicle.State;
+            capacity = vehicle.Capacity;
+            consumption = vehicle.Consumption;
+            load = vehicle.Load;
+            fuel = vehicle.Fuel;
+        }
+    }
+
+    void OnChange(string value, string name)
+    {
+        if (name == "brand")
+        {
+            brand = value;
+        }
+        else if (name == "model")
+        {
+            model = value;
+        }
+        else if (name == "plate")
+        {
+            plate = value;
+        }
+    }
+
+    async Task AddVehicle()
+    {
+        VehicleData vehicle = new VehicleData()
+            {
+                Brand = brand,
+                Model = model,
+                Plate = plate,
+                State = state.Value,
+                Load = load.Value,
+                Capacity = capacity.Value,
+                Consumption = consumption.Value,
+                Fuel = fuel.Value
+            };
+        string response = await controller.AddVehicleAsync(vehicle);
+
+        if (response == Message.GetMessage(MessageEnum.success))
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sukces!",
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Błąd!",
+                    Detail = response,
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        dialogService.Close();
+        //refresh
+        //busy button
+        //close with parameter
+    }
+
+
+
+    async Task EditVehicle()
+    {
+        VehicleData vehicle = new VehicleData()
+            {
+                Id = id,
+                Brand = brand,
+                Model = model,
+                Plate = plate,
+                State = state.Value,
+                Load = load.Value,
+                Capacity = capacity.Value,
+                Consumption = consumption.Value,
+                Fuel = fuel.Value
+            };
+        string response = await controller.EditVehicleAsync(vehicle);
+
+        if (response == Message.GetMessage(MessageEnum.success))
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sukces!",
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Błąd!",
+                    Detail = response,
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        dialogService.Close();
+        //refresh
+        //busy button
+        //close with parameter
+    }
+
+    bool IsDisabled()
+    {
+        if (model == null || model.Trim() == "" || brand == null || brand.Trim() == "" || plate == null || plate.Trim() == "" ||
+        load == null || load == 0 || capacity == null || capacity == 0 || consumption == null || consumption == 0 ||
+        state == null || fuel == null)
+        {
+            return true;
+        }
+        return false;
+    }
+}

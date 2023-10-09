@@ -1,0 +1,255 @@
+﻿@page "/routes"
+@using System.Globalization
+@inject IController controller
+@inject IModel model
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+@inject NavigationManager NaviManager
+<h1>Trasy</h1>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <p class="mb-0">Oczekujące oraz aktualnie wykonywane trasy.</p>
+
+    <RadzenButton Click=@CalculateRoute Icon="alt_route" Text="WYGENERUJ TRASĘ"
+                  Style="color: white; width: 30%; font-size: 15px; background-color:rgb(60, 139, 55);" />
+</div>
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" FilterMode="FilterMode.Simple" FilterText="" AllowSorting="true" PageSize="10" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@model.RoutesList" TItem="PDI.ApplicationDispatcher.Model.RouteData" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.And" EmptyText="Brak danych."
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+    <Columns>
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="Id" Filterable="false" Title="ID" Frozen="true" Width="30px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="VehicleId" Filterable="false" Title="ŚMIECIARKA" Width="50px" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                <div class="">
+                    <RadzenButton Icon="local_shipping" Style="color:green; background: #00000000" Click="@(args => RouteVehicle(data.VehicleId))" />
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="DumpstersIds" Filterable="false" Title="ŚMIETNIKI" Width="50px" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                <div class="">
+                    <RadzenButton Icon="delete" Style="color:green; background: #00000000" Click="@(args => RouteDumpsters(data.Id))" />
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="DumpstersIds.Count" Filterable="true" Title="L. ŚMIETNIKÓW" Width="50px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="Distance" Filterable="true" FilterOperator="FilterOperator.GreaterThanOrEquals" Title="DYSTANS [km]" Width="50px" TextAlign="TextAlign.Center" >
+            <Template Context="data">
+                    <span> @Math.Round(data.Distance,3)</span>
+        </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="DumpstersIds" Filterable="true" Title="ŚR. ZAPEŁNIENIE [%]" Width="50px" TextAlign="TextAlign.Center" FilterValue="@currentUsage">
+            <FilterTemplate>
+                @* not working *@
+                <RadzenNumeric TValue="int?" Step="10" Change=@(args => OnChange("usage", args))
+                               Style="width: 100%; height: 35px; margin-bottom: 0.5rem;" />
+            </FilterTemplate>
+            <Template Context="data">
+                @if (GetUsage(data.DumpstersIds) <= 50)
+                {
+                    <span style="color: green; font-weight: 800">@GetUsage(data.DumpstersIds)</span>
+                }
+                else if (GetUsage(data.DumpstersIds) <= 80)
+                {
+                    <span style="color: rgb(135, 131, 19); font-weight: 800">@GetUsage(data.DumpstersIds)</span>
+                }
+                else
+                {
+                    <span style="color: rgb(181, 21, 10); font-weight: 800">@GetUsage(data.DumpstersIds)</span>
+                }
+            </Template>
+            
+
+            </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="CreateDate" Filterable="true" Title="UTWORZENIE" Width="50px" TextAlign="TextAlign.Center" >
+            <Template Context="data">
+                <span>@DateTime.ParseExact(data.CreateDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)</span>
+            </Template>
+            </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="StartDate" Filterable="true" Title="ROZPOCZĘCIE" Width="50px" TextAlign="TextAlign.Center" >
+            <Template Context="data">
+                @if(data.State == RouteState.started)
+                {
+                    <span>@DateTime.ParseExact(data.StartDate, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture)</span>
+                }
+                else {
+                    <span>-</span>
+                }
+                
+            </Template>
+            </RadzenDataGridColumn>
+        @* <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="FinishDate" Filterable="false" Title="t3" Width="50px" TextAlign="TextAlign.Center" />*@
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="State" Title="STAN" Width="70px" TextAlign="TextAlign.Center" FilterValue="@currentState">
+            <FilterTemplate>
+                <RadzenDropDown @bind-Value="@currentState"
+                                TextProperty="Text"
+                                AllowClear="true"
+                                ValueProperty="Value"
+                                Style="width: 100%; height: 35px; margin-bottom: 0.5rem;"
+                                Change="@OnSelectedStateChange"
+                                Data="@(Enum.GetValues(typeof(RouteState)).Cast<RouteState?>().Select(t => new { Text = $"{t.GetDisplayDescription()}", Value = t }))" />
+            </FilterTemplate>
+            <Template Context="data">
+                <div class="d-flex justify-content-between px-3">
+                    @if (data.State == RouteState.started)
+                    {
+                        <RadzenIcon Icon="play_arrow" Style="color:green" />
+                        <span class="align-content-center" style="width: 100px;">@data.State.GetDisplayDescription()</span>
+                    }
+                    else
+                    {
+                        <RadzenIcon Icon="stop" Style="color:red" />
+                        <span class="align-content-center" style="width: 100px;">@data.State.GetDisplayDescription()</span>
+                    }
+                </div>
+
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="PDI.ApplicationDispatcher.Model.RouteData" Property="State" Filterable="false" Sortable="false" Title="AKCJE" Width="80px" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                @if (data.State == RouteState.started)
+                {
+                    <RadzenButton Click=@(args => OnClick("finish", data)) Icon="check" Style="color: white; width: 100%; font-size: 13px; background-color:rgb(39,98,79)" Text="ZAKOŃCZ" />
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between">
+                        <RadzenButton Click=@(args => OnClick("start", data)) Icon="forward" Style="color: white; width: 49%; font-size: 13px; background-color:rgb(60, 139, 55)" Text="START" />
+                        <RadzenButton Click=@(args => OnClick("delete", data)) Icon="clear" Style="color: white; width: 49%; font-size: 13px; background-color:rgb(181, 21, 10)" Text="USUŃ" />
+                    </div>
+
+                }
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    IEnumerable<ApplicationDispatcher.Model.RouteData> routes;
+    RouteState? currentState;
+    int? currentUsage;
+
+    private IController controller_ = ControllerFactory.GetController(new EmptyEventDispatcher());
+
+    protected override async Task OnInitializedAsync()
+    {
+        await controller.SearchRoutesAsync();
+        await controller.SearchDumpstersAsync();
+
+        //await Task.Run(() => { IModel model1 = controller_.Model; IModel model2 = controller.Model; IModel model3 = model; });
+        //List<PDI.ApplicationDispatcher.Model.RouteData> routesTest = new List<PDI.ApplicationDispatcher.Model.RouteData>();
+        //PDI.ApplicationDispatcher.Model.RouteData r1 = new ApplicationDispatcher.Model.RouteData() { Id = "1", VehicleId = "2", DumpstersIds = new List<string>() { "3", "23" }, State = State.started };
+        //PDI.ApplicationDispatcher.Model.RouteData r2 = new ApplicationDispatcher.Model.RouteData() { Id = "2", VehicleId = "22", DumpstersIds = new List<string>() { "3", "4", "23" }, State = State.notStarted };
+        //PDI.ApplicationDispatcher.Model.RouteData r3 = new ApplicationDispatcher.Model.RouteData() { Id = "3", VehicleId = "223", DumpstersIds = new List<string>() { "3", "4", "23", "17", "354" }, State = State.started };
+        //routesTest.Add(r1);
+        //routesTest.Add(r2);
+        //routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3); routesTest.Add(r3);
+
+        //int abc = routesTest.Count;
+        //routes = routesTest;
+    }
+
+    void OnSelectedStateChange(object value)
+    {
+
+
+    }
+
+    async void OnChange(string filter, dynamic value)
+    {
+        if (filter == "usage")
+        {
+            currentUsage = value;
+        }
+
+    }
+
+    async void OnClick(string buttonName, PDI.ApplicationDispatcher.Model.RouteData data)
+    {
+        string response = String.Empty;
+        if (buttonName == "finish")
+        {
+            response = await controller.FinishRouteAsync(data);
+        }
+        else if (buttonName == "start")
+        {
+            response = await controller.StartRouteAsync(data);
+        }
+        else if (buttonName == "delete")
+        {
+            response = await controller.DeleteRouteAsync(data);
+        }
+        if (response == Message.GetMessage(MessageEnum.success))
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sukces!",
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Błąd!",
+                    Detail = response,
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+
+        //fake refresh here
+        routes = model.RoutesList;
+    }
+
+    private async Task CalculateRoute()
+    {
+        string response = await controller.CalculateRouteAsync();
+        if (response == Message.GetMessage(MessageEnum.success))
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sukces!",
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Błąd!",
+                    Detail = response,
+                    Duration = 3000,
+                    Style = "position: fixed; left: 50%; transform: translate(-50%, 0); bottom: 0px; top: auto;",
+                });
+        }
+    }
+
+    private async Task RouteDumpsters(string id)
+    {
+        NaviManager.NavigateTo("/dumpsters/" + id);
+    }
+    private async Task RouteVehicle(string id)
+    {
+        NaviManager.NavigateTo("/vehicles/" + id);
+    }
+    private double GetUsage(List<string> ids)
+    {
+        double usage = 0;
+        for(int i=0; i < ids.Count; i++)
+        {
+            usage += model.DumpstersList.Find(d => d.Id == ids[i]).Usage;
+        }
+        usage /= ids.Count;
+        return Math.Round(usage, 3);
+    }
+    //paginacja
+    //filtrowanie
+}

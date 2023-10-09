@@ -1,0 +1,64 @@
+﻿<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">Aplikacja Dyspozytor</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <RadzenIcon Icon="home" />
+                <span class="pl-3">Dashboard</span>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="routes">
+                <RadzenIcon Icon="directions" />
+                <span class="pl-3">Trasy</span>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="vehicles">
+                <RadzenIcon Icon="local_shipping" />
+                <span class="pl-3">Śmieciarki</span>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="dumpsters">
+                <RadzenIcon Icon="delete" />
+                <span class="pl-3">Śmietniki</span>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="map">
+                <RadzenIcon Icon="public" />
+                <span class="pl-3">Mapa</span>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="statistics">
+                 <RadzenIcon Icon="bar_chart" />
+                <span class="pl-3">Statystyki</span>
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="data">
+                 <RadzenIcon Icon="description" />
+                <span class="pl-3">Dane Archiwalne</span>
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

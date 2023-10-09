@@ -1,0 +1,166 @@
+﻿@page "/statistics"
+@inject IController controller
+@inject IModel model
+
+<h1>Statystyki</h1>
+
+<div class="charts">
+
+    <RadzenCard Class="" Style="width: 600px">
+        <RadzenChart>
+            <RadzenColumnSeries Data="@routesCounts" CategoryProperty="State" ValueProperty="Value" Title="2022">
+                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            </RadzenColumnSeries>
+            <RadzenCategoryAxis Padding="20" Formatter="@FormatAsDay" />
+            <RadzenColumnOptions Radius="5" />
+            <RadzenValueAxis>
+                <RadzenGridLines Visible="true" />
+                <RadzenAxisTitle Text="Liczba wykonanych tras" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </RadzenCard>
+
+    <RadzenCard Class="" Style="width: 600px">
+        <RadzenChart>
+            <RadzenColumnSeries Data="@routesDistance" CategoryProperty="State" ValueProperty="Value" Title="2022">
+                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            </RadzenColumnSeries>
+            <RadzenCategoryAxis Padding="20" Formatter="@FormatAsDay" />
+            <RadzenColumnOptions Radius="5" />
+            <RadzenValueAxis>
+                <RadzenGridLines Visible="true" />
+                <RadzenAxisTitle Text="Przejechany dystans [km]" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </RadzenCard>
+
+    <RadzenCard Class="" Style="width: 500px">
+        <RadzenChart>
+            <RadzenDonutSeries Data="@dumpsterItems" CategoryProperty="State" ValueProperty="Value">
+                <ChildContent>
+                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                </ChildContent>
+                <TitleTemplate>
+                    <div class="rz-donut-content">
+                        <div>Zapełnienie śmietników</div>
+                    </div>
+                </TitleTemplate>
+            </RadzenDonutSeries>
+        </RadzenChart>
+    </RadzenCard>
+</div>
+
+
+@code {
+    bool showDataLabels = false;
+    DataItem[] dumpsterItems = new DataItem[]
+    {
+            new DataItem
+            {
+                State = "[0, 50] %",
+                Value = 0
+            },
+            new DataItem
+            {
+                State = "(50, 80] %",
+                Value = 0
+            },
+            new DataItem
+            {
+                State = "(80, 100] %",
+                Value = 0
+            },
+    };
+    DataItem[] routesCounts = new DataItem[]
+    {
+    };
+    DataItem[] routesDistance = new DataItem[]
+    {
+    };
+
+    class DataItem
+    {
+        public string State { get; set; }
+        public double Value { get; set; }
+    }
+    //private IController controller_ = ControllerFactory.GetController(new EmptyEventDispatcher());
+
+    protected override async Task OnInitializedAsync()
+    {
+        await controller.SearchOldRoutesAsync();
+        await controller.SearchDumpstersAsync();
+        
+        List<DataItem> rtmp = new();
+        List<DataItem> ptmp = new();
+        for (int i = 0; i < 12; i++)
+        {
+            Random random = new Random();
+            double y = random.NextDouble() * 10;
+            Random random2 = new Random();
+            double y2 = random2.NextDouble() * 5;
+            if (y < 3)
+            {
+                y = 3;
+            }
+            if (y2 < 2)
+            {
+                y2 = 2;
+            }
+            rtmp.Add(
+                new DataItem
+                    {
+                        State = ("2023-" + (i + 1).ToString().PadLeft(2, '0') + "-01"),
+                        Value = (int)Math.Round(y, 0)
+                    });
+            ptmp.Add(
+        new DataItem
+            {
+                State = ("2023-" + (i + 1).ToString().PadLeft(2, '0') + "-01"),
+                Value = y2 * y
+            });
+        }
+       
+        for (int i = 0; i < 12; i++)
+        {
+
+        }
+        routesCounts = rtmp.ToArray();
+        routesDistance = ptmp.ToArray();
+        foreach (DumpsterData dumpster in model.DumpstersList)
+        {
+            if (dumpster.Usage <= 50)
+            {
+                dumpsterItems[0].Value++;
+            }
+            else if (dumpster.Usage <= 80)
+            {
+                dumpsterItems[1].Value++;
+            }
+            else
+            {
+                dumpsterItems[2].Value++;
+            }
+        }
+        //await Task.Run(() => { IModel model1 = controller_.Model; IModel model2 = controller.Model; IModel model3 = model; });
+    }
+
+    string FormatAsDay(object value)
+    {
+        if (value != null)
+        {
+            return Convert.ToDateTime(value).ToString("MMM");
+        }
+
+        return string.Empty;
+    }
+}
+
+<style>
+    .charts {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: 8px;
+        row-gap: 16px;
+    }
+</style>
