@@ -1,0 +1,114 @@
+version: "3.9"
+
+networks:
+  int_network:
+
+services:
+  dataservice-dumpsters-api:
+    image: tczaplic/pdidataservicedumpstersrest:latest
+    ports:
+      - 8080:80
+      - 44300:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+      
+  dataservice-measurements-api:
+    image: tczaplic/pdidataservicemeasurementsrest:latest
+    ports:
+      - 8081:80
+      - 44301:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+      
+  dataservice-vehicles-api:
+    image: tczaplic/pdidataservicevehiclesrest:latest
+    ports:
+      - 8082:80
+      - 44302:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+      
+  dataservice-routes-api:
+    image: tczaplic/pdidataserviceroutesrest:latest
+    ports:
+      - 8083:80
+      - 44303:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+      
+  processservice-routes-api:
+    image: tczaplic/pdiprocessingserviceroutesrest:latest
+    ports:
+      - 8085:80
+      - 44305:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+    depends_on:
+      - dataservice-dumpsters-api
+      - dataservice-vehicles-api
+      - dataservice-routes-api
+  
+  processservice-sensors-api:
+    image: tczaplic/pdiprocessingservicesensorsrest:latest
+    ports:
+      - 8088:80
+      - 44308:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+    depends_on:
+      - dataservice-dumpsters-api
+      - dataservice-measurements-api
+      
+  appservice-dispatcher-api:
+    image: tczaplic/pdiappservicedispatcherrest:latest
+    ports:
+      - 8084:80
+      - 44304:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+    depends_on:
+      - dataservice-dumpsters-api
+      - dataservice-measurements-api
+      - dataservice-routes-api
+      - dataservice-vehicles-api   
+      - processservice-routes-api
+      
+  application-dispatcher-api:
+    image: tczaplic/pdiapplicationdispatcherblazorserver:latest
+    ports:
+      - 8086:80
+      - 44306:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+    depends_on:
+      - appservice-dispatcher-api
+  
+  simulationmodule-sensors-api:
+    image: tczaplic/pdisimulator:latest
+    stdin_open: true
+    tty: true
+    ports:
+      - 8087:80
+      - 44307:443
+    networks:
+      - int_network
+    deploy:
+      replicas: 1
+    depends_on:
+      - processservice-sensors-api

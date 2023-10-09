@@ -1,0 +1,413 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataservice-dumpsters
+  labels:
+    app: dataservice-dumpsters
+    tier: dataservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataservice-dumpsters
+  template:
+    metadata:
+      labels:
+        app: dataservice-dumpsters
+        tier: dataservice
+    spec:
+      containers:
+      - name: dataservice-dumpsters-rest
+        image: tczaplic/pdidataservicedumpstersrest:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: dumpsters
+          mountPath: /app/dumpsters.json
+      imagePullSecrets:
+      - name: docker-secret
+      volumes:
+      - name: dumpsters
+        hostPath:
+          path: /var/lib/docker/volumes/dumpsters/_data/dumpsters.json
+          type: FileOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataservice-dumpsters-api
+  labels:
+    app: dataservice-dumpsters-api
+    tier: dataservice
+spec:
+  selector:
+    app: dataservice-dumpsters
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataservice-measurements
+  labels:
+    app: dataservice-measurements
+    tier: dataservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataservice-measurements
+  template:
+    metadata:
+      labels:
+        app: dataservice-measurements
+        tier: dataservice
+    spec:
+      containers:
+      - name: dataservice-measurements-rest
+        image: tczaplic/pdidataservicemeasurementsrest:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: measurements
+          mountPath: /app/measurements.json
+      imagePullSecrets:
+      - name: docker-secret
+      volumes:
+      - name: measurements
+        hostPath:
+          path: /var/lib/docker/volumes/measurements/_data/measurements.json
+          type: FileOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataservice-measurements-api
+  labels:
+    app: dataservice-measurements-api
+    tier: dataservice
+spec:
+  selector:
+    app: dataservice-measurements
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataservice-vehicles
+  labels:
+    app: dataservice-vehicles
+    tier: dataservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataservice-vehicles
+  template:
+    metadata:
+      labels:
+        app: dataservice-vehicles
+        tier: dataservice
+    spec:
+      containers:
+      - name: dataservice-vehicles-rest
+        image: tczaplic/pdidataservicevehiclesrest:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /app/vehicles.json
+          name: vehicles
+      imagePullSecrets:
+      - name: docker-secret
+      volumes:
+      - name: vehicles
+        hostPath:
+          path: /var/lib/docker/volumes/vehicles/_data/vehicles.json
+          type: FileOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataservice-vehicles-api
+  labels:
+    app: dataservice-vehicles-api
+    tier: dataservice
+spec:
+  selector:
+    app: dataservice-vehicles
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataservice-routes
+  labels:
+    app: dataservice-routes
+    tier: dataservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataservice-routes
+  template:
+    metadata:
+      labels:
+        app: dataservice-routes
+        tier: dataservice
+    spec:
+      containers:
+      - name: dataservice-routes-rest
+        image: tczaplic/pdidataserviceroutesrest:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: routes
+          mountPath: /app/routes.json
+      imagePullSecrets:
+      - name: docker-secret
+      volumes:
+      - name: routes
+        hostPath:
+          path: /var/lib/docker/volumes/routes/_data/routes.json
+          type: FileOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataservice-routes-api
+  labels:
+    app: dataservice-routes-api
+    tier: dataservice
+spec:
+  selector:
+    app: dataservice-routes
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processservice-routes
+  labels:
+    app: processservice-routes
+    tier: processservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: processservice-routes
+  template:
+    metadata:
+      labels:
+        app: processservice-routes
+        tier: processservice
+    spec:
+      containers:
+      - name: processservice-routes-rest
+        image: tczaplic/pdiprocessingserviceroutesrest:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: processservice-routes-api
+  labels:
+    app: processservice-routes-api
+    tier: processservice
+spec:
+  selector:
+    app: processservice-routes
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30085
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processservice-sensors
+  labels:
+    app: processservice-sensors
+    tier: processservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: processservice-sensors
+  template:
+    metadata:
+      labels:
+        app: processservice-sensors
+        tier: processservice
+    spec:
+      containers:
+      - name: processservice-sensors-rest
+        image: tczaplic/pdiprocessingservicesensorsrest:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: processservice-sensors-api
+  labels:
+    app: processservice-sensors-api
+    tier: processservice
+spec:
+  selector:
+    app: processservice-sensors
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30088
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appservice-dispatcher
+  labels:
+    app: appservice-dispatcher
+    tier: appservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: appservice-dispatcher
+  template:
+    metadata:
+      labels:
+        app: appservice-dispatcher
+        tier: backend
+    spec:
+      containers:
+      - name: appservice-dispatcher-rest
+        image: tczaplic/pdiappservicedispatcherrest:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appservice-dispatcher-api
+  labels:
+    app: appservice-dispatcher-api
+    tier: appservice
+spec:
+  selector:
+    app: appservice-dispatcher
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30084
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application-dispatcher  
+  labels:
+    app: application-dispatcher
+    tier: application
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: application-dispatcher
+  template:
+    metadata:
+      labels:
+        app: application-dispatcher
+        tier: frontend
+    spec:
+      containers:
+      - name: application-dispatcher-blazorserver
+        image: tczaplic/pdiapplicationdispatcherblazorserver:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application-dispatcher-api
+  labels:
+    app: application-dispatcher-api
+    tier: application
+spec:
+  selector:
+    app: application-dispatcher
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30086
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: simulationmodule-sensors
+  labels:
+    app: simulationmodule-sensors
+    tier: simulationmodule
+spec:
+  serviceName: "simulator"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simulationmodule-sensors
+  template:
+    metadata:
+      labels:
+        app: simulationmodule-sensors
+        tier: simulator
+    spec:
+      containers:
+      - name: simulationmodule-sensors-rest
+        image: tczaplic/pdisimulator:latest
+        imagePullPolicy: Always
+        tty: true
+        stdin: true
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: docker-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simulationmodule-sensors-api
+  labels:
+    app: simulationmodule-sensors-api
+    tier: simulationmodule
+spec:
+  selector:
+    app: simulationmodule-sensors
+  type: NodePort
+  ports:
+  - port: 80
+    nodePort: 30087
+---

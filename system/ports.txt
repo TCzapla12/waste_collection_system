@@ -1,0 +1,16 @@
+DataService:
+	Dumpsters:		44328, 61323 -> 44300, 8080 -> 30080
+	Measurements:   	44329, 61324 -> 44301, 8081 -> 30081
+	Vehicles:		44330, 61325 -> 44302, 8082 -> 30082
+	Routes:			44327, 61322 -> 44303, 8083 -> 30083 (61327 not working!)
+ApplicationService:
+	Dispatcher:		44340, 61335 -> 44304, 8084 -> 30084
+ProcessingService:
+	Routes:			44341, 61336 -> 44305, 8085 -> 30085
+	Sensor:			44343, 61338 -> 44308, 8088 -> 30088
+Application:
+	Dispatcher:		44319, 13886 -> 44306, 8086 -> 30086
+SimulationModule:
+	Measurements:		44342, 61337 -> 44307, 8087 -> 30087
+	
+
